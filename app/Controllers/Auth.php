@@ -25,7 +25,6 @@ class Auth extends BaseController
 
         $adminModel = new M_admin();
         $admin = $adminModel->adminlogin($username);
-
         if ($admin) {
             if (password_verify($password, $admin->admin_password)) {
                 $this->session->set([
@@ -41,10 +40,10 @@ class Auth extends BaseController
             return redirect()->to('/')->with('error', 'Username or mobile number not found.');
         }
     }
-
-    public function logout()
+  public function logout()
     {
         $this->session->destroy();
         return redirect()->to('/');
     }
 }
+?>

@@ -17,12 +17,27 @@ class M_admin extends Model
         'admin_status',
         'admin_created',
     ];
-    public function adminlogin($username)
+    public function adminlogin($adminname)
     {
-        return $this->where('admin_email', $username)
-                    ->orWhere('admin_mobile', $username)
+        return $this->where('admin_email', $adminname)
+                    ->orWhere('admin_mobile', $adminname)
                     ->get()->getRow();
     }
-
+public function new_password_set($adminid,$admin_pwd)
+    {
+      $this->set('admin_password',$admin_pwd);
+      $this->where('admin_id',$adminid);
+      if($this->update()){
+        return true;
+      }else {
+        return false;
+      }
+    }
+  public function getAdminData($adminid)
+    {
+      $this->where('admin_id',$adminid);
+      $this->select('admin_password');
+      return  $this->get()->getRow();
+    }
 }
 ?>

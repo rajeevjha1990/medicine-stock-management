@@ -28,8 +28,12 @@ $(document).ready(function () {
 
         var $form = $(this);
         var formData = new FormData(this);
+        var $submitBtn = $form.find('[type="submit"]');
 
-        $form.find('[type="submit"]').prop("disabled", true).data("original-text", $form.find('[type="submit"]').text()).text("Processing...");
+        // Disable submit button while processing
+        $submitBtn.prop("disabled", true)
+            .data("original-text", $submitBtn.text())
+            .text("Processing...");
 
         $.ajax({
             url: $form.attr("action"),
@@ -38,11 +42,15 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             dataType: "json",
-            success: function (res) {
-                $form.find('[type="submit"]').prop("disabled", false).text($form.find('[type="submit"]').data("original-text"));
 
+            success: function (res) {
+                // Re-enable button
+                $submitBtn.prop("disabled", false)
+                    .text($submitBtn.data("original-text"));
+
+                // ✅ Success Response
                 if (res.status) {
-                    $.notify(res.message, "success");
+                    $.notify(res.message || "Success", "success");
 
                     if (res.reload) {
                         setTimeout(function () {
@@ -55,24 +63,64 @@ $(document).ready(function () {
                             window.location.href = res.redirect;
                         }, 1500);
                     }
+                }
 
-                } else {
+                // ❌ Error Response
+                else {
                     if (res.err) {
-                        $.each(res.err, function (key, val) {
-                            $.notify(val, "error");
-                        });
-                    } else {
-                        $.notify(res.message || "Something went wrong", "error");
+                        // If single string error
+                        if (typeof res.err === "string") {
+                            $.notify(res.err, "error");
+                        }
+                        // If object of errors
+                        else if (typeof res.err === "object") {
+                            $.each(res.err, function (key, val) {
+                                $.notify(val, "error");
+                            });
+                        }
+                    }
+                    else if (res.message) {
+                        $.notify(res.message, "error");
+                    }
+                    else {
+                        $.notify("Something went wrong", "error");
                     }
                 }
             },
-            error: function (xhr) {
-                $form.find('[type="submit"]').prop("disabled", false).text($form.find('[type="submit"]').data("original-text"));
 
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    $.each(xhr.responseJSON.error, function (key, val) {
-                        $.notify(val, "error");
-                    });
+            error: function (xhr) {
+                // Re-enable button
+                $submitBtn.prop("disabled", false)
+                    .text($submitBtn.data("original-text"));
+
+                // Handle validation or server errors
+                if (xhr.responseJSON) {
+                    const res = xhr.responseJSON;
+
+                    if (res.error) {
+                        if (typeof res.error === "string") {
+                            $.notify(res.error, "error");
+                        } else {
+                            $.each(res.error, function (key, val) {
+                                $.notify(val, "error");
+                            });
+                        }
+                    }
+                    else if (res.message) {
+                        $.notify(res.message, "error");
+                    }
+                    else if (res.err) {
+                        if (typeof res.err === "string") {
+                            $.notify(res.err, "error");
+                        } else {
+                            $.each(res.err, function (key, val) {
+                                $.notify(val, "error");
+                            });
+                        }
+                    }
+                    else {
+                        $.notify("Unexpected error occurred", "error");
+                    }
                 } else {
                     $.notify("Something went wrong", "error");
                 }

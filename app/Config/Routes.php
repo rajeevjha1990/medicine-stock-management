@@ -19,3 +19,5 @@ $routes->get('medicine/medicine_sale', 'Medicine::medicine_sale');
 $routes->post('medicine/sale_medicine', 'Medicine::sale_medicine');
 $routes->get('medicine/get_stock_history/(:num)', 'Medicine::get_stock_history/$1');
 $routes->get('dashboard/historyData', 'Dashboard::historyData');
+$routes->get('medicine/change_password_form', 'Medicine::change_password_form');
+$routes->post('medicine/change_password', 'Medicine::change_password');

@@ -247,6 +247,67 @@ public function get_stock_history($medicineid)
     echo view('stock_history',$data);
     echo view('includes/footer');
   }
+public function change_password_form()
+  {
+    if (!session()->get('logged_in')) {
+        return redirect()->to('/');
+    }
+    $data['admin_name'] = $this->session->get('admin_name');
+    echo view('includes/header',$data);
+    echo view('includes/sidebar');
+    echo view('change_password');
+    echo view('includes/footer');
+  }
+public function change_password()
+{
+    $m_admin = new \App\Models\M_admin();
+    $this->validation->setRule('current_password', 'Current Password', 'required');
+    $this->validation->setRule('new_password', 'New Password', 'required');
+    $this->validation->setRule('confirm_password', 'Confirm Password', 'required');
 
+    if (!$this->validation->withRequest($this->request)->run()) {
+        return $this->response->setStatusCode(422)->setJSON([
+            'status' => false,
+            'error' => $this->validation->getErrors()
+        ]);
+    }
+
+    if ($this->request->getVar('new_password') != $this->request->getVar('confirm_password')) {
+      return $this->response->setJSON([
+          'status' => false,
+          'err' => "New password and confirm password do not match."
+      ]);
+    }
+
+    $adminid = $this->session->get('id');
+    $old_password = $this->request->getVar('current_password');
+    $new_password = $this->request->getVar('new_password');
+
+    $admindata = $m_admin->getAdminData($adminid);
+    $hashed_pwd = $admindata->admin_password ?? '';
+
+    if (password_verify($old_password, $hashed_pwd)) {
+        $update = $m_admin->new_password_set($adminid, password_hash($new_password, PASSWORD_DEFAULT));
+
+        if ($update) {
+            $this->session->destroy();
+            return $this->response->setJSON([
+                'status' => true,
+                'message' => "Password reset successfully.",
+                'reload'=> redirect()->to('/')
+            ]);
+        } else {
+            return $this->response->setStatusCode(500)->setJSON([
+                'status' => false,
+                'error' => "Failed to update password."
+            ]);
+        }
+      } else {
+          return $this->response->setStatusCode(405)->setJSON([
+              'status' => false,
+              'error' => "Old password is incorrect."
+          ]);
+      }
+  }
 }
 ?>
