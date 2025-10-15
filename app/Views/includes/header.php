@@ -79,9 +79,32 @@
             <?php } ?>
         </a>
         <span><?php echo $admin_name ?? 'Guest'; ?></span>
-        <form method="post" action="<?= base_url('auth/logout') ?>" style="margin:0;">
-            <button type="submit" class="logout-btn">Logout</button>
-        </form>
+        <a href="<?php echo base_url() ?>/auth/logout" class="logout-btn">
+            Logout
+            <i class="float-right fas sign-out-alt"></i>
+          </a>
     </div>
 </header>
 <div class="main-container">
+<script>
+document.querySelector('.logout-btn').addEventListener('click', function(e){
+    e.preventDefault(); // prevent immediate logout
+    const logoutUrl = this.href;
+
+    Swal.fire({
+        title: 'Are you sure you want to logout?',
+        text: "You will be logged out from the system.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Logout',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // redirect to logout
+            window.location.href = logoutUrl;
+        }
+    });
+});
+</script>

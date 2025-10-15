@@ -90,3 +90,14 @@
 </body>
 
 </html>
+<?php if (session()->getFlashdata('message')): ?>
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Logged Out',
+    text: '<?= session()->getFlashdata('message') ?>',
+    timer: 3000,
+    showConfirmButton: false
+});
+</script>
+<?php endif; ?>

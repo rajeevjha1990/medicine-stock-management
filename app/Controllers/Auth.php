@@ -40,10 +40,14 @@ class Auth extends BaseController
             return redirect()->to('/')->with('error', 'Username or mobile number not found.');
         }
     }
-  public function logout()
-    {
-        $this->session->destroy();
-        return redirect()->to('/');
-    }
+public function logout()
+{
+    $session = session();
+    $session->destroy();
+
+    return redirect()->to(base_url('/'))
+                     ->with('message', 'You have been logged out successfully.');
+}
+
 }
 ?>

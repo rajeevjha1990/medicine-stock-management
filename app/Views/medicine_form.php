@@ -29,7 +29,7 @@
         </a>
       </div>
 
-      <form id="medicineForm" method="post" action="<?php echo base_url();?>/medicine/new_medicine">
+      <form method="post" action="<?= base_url('auth/logout') ?>" style="margin:0;">
         <input value="<?php echo $id; ?>" type="hidden" name="id" id="id" class="form-control"/>
         <div class="row g-3">
           <div class="col-md-6">

@@ -5,7 +5,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Auth::login');
 $routes->post('/auth/dologin', 'Auth::dologin');
-$routes->post('/auth/logout', 'Auth::logout');
+$routes->get('/auth/logout', 'Auth::logout');
 $routes->get('dashboard', 'Dashboard::index');
 $routes->get('medicine', 'Medicine::index');
 $routes->get('medicine/medicine_form', 'Medicine::medicine_form');

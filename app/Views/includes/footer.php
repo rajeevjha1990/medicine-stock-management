@@ -10,6 +10,8 @@
 <script src="<?php echo base_url(); ?>/assets/js/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/js/notify.min.js"></script>
 <script src="<?php echo base_url();?>/assets/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 </html>
 <script>
@@ -81,8 +83,7 @@ $(document).ready(function () {
                     }
                     else if (res.message) {
                         $.notify(res.message, "error");
-                    }
-                    else {
+                    }else {
                         $.notify("Something went wrong", "error");
                     }
                 }
